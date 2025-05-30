@@ -2,6 +2,16 @@
 
 A powerful Retrieval-Augmented Generation (RAG) system that automatically crawls websites, extracts content, and creates an intelligent chatbot interface for querying the collected information.
 
+## 🎥 Demo
+
+<div align="center">
+  <a href="https://youtu.be/cV9fQnuauKw?si=Xmm9Q0HwEqExzGRX">
+    <img src="https://img.youtube.com/vi/cV9fQnuauKw/maxresdefault.jpg" alt="Crawl4AI RAG Demo" style="width: 100%; max-width: 100%;" />
+  </a>
+</div>
+
+*Click the image above to watch the demo video showing how to crawl websites and interact with the AI chatbot.*
+
 ## 🚀 Features
 
 - **Automated Web Crawling**: Uses Crawl4AI to extract content from websites and sitemaps
