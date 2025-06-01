@@ -522,51 +522,52 @@ async def main():
                     "<div style='padding: 3rem;'></div>", unsafe_allow_html=True
                 )
 
-                # Create a container for input at the bottom
-                input_container = st.container()
-                with input_container:
-                    # Chat input
-                    user_input = st.chat_input(
-                        "Ask a question about the processed content...",
-                        disabled=st.session_state.is_processing,
-                    )
+                # Chat input processing logic will be moved outside columns
 
-                    if user_input:
-                        st.session_state.messages.append(
-                            ModelRequest(parts=[UserPromptPart(content=user_input)])
-                        )
-
-                        with st.chat_message("user"):
-                            st.markdown(user_input)
-
-                        with st.chat_message("assistant"):
-                            await run_agent_with_streaming(user_input)
-
-                        # Auto-scroll to bottom after new message
-                        js = """
-                        <script>
-                            function scrollToBottom() {
-                                const messages = document.querySelector('.stChatMessageContent');
-                                if (messages) {
-                                    messages.scrollTop = messages.scrollHeight;
-                                }
-                            }
-                            setTimeout(scrollToBottom, 100);
-                        </script>
-                        """
-                        st.markdown(js, unsafe_allow_html=True)
-
-                # Clear chat button - moved to bottom
-                col1, col2, col3 = st.columns([3, 2, 3])
-                with col2:
-                    if st.button("Clear Chat History", use_container_width=True):
-                        st.session_state.messages = []
-                        st.rerun()
+                # Clear chat button moved outside columns
         else:
             if existing_data:
                 st.info("The knowledge base is ready! Start asking questions below.")
             else:
                 st.info("Please process a URL first to start chatting!")
+
+    # Chat input must be outside columns - moved here
+    if st.session_state.processing_complete:
+        # Chat input
+        user_input = st.chat_input(
+            "Ask a question about the processed content...",
+            disabled=st.session_state.is_processing,
+        )
+
+        if user_input:
+            st.session_state.messages.append(
+                ModelRequest(parts=[UserPromptPart(content=user_input)])
+            )
+
+            with st.chat_message("user"):
+                st.markdown(user_input)
+
+            with st.chat_message("assistant"):
+                await run_agent_with_streaming(user_input)
+
+            # Auto-scroll to bottom after new message
+            js = """
+            <script>
+                function scrollToBottom() {
+                    const messages = document.querySelector('.stChatMessageContent');
+                    if (messages) {
+                        messages.scrollTop = messages.scrollHeight;
+                    }
+                }
+                setTimeout(scrollToBottom, 100);
+            </script>
+            """
+            st.markdown(js, unsafe_allow_html=True)
+
+        # Clear chat button
+        if st.button("Clear Chat History"):
+            st.session_state.messages = []
+            st.rerun()
 
     # Add footer with system status
     st.markdown("---")

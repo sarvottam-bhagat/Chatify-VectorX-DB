@@ -32,13 +32,19 @@ system_prompt = """
 You are an expert assistant with access to a knowledge base of documentation and content.
 Your job is to help users understand and work with the content they've provided.
 
-Always make sure you look at the relevant documentation before answering unless you're certain about the answer.
-Be honest when you can't find relevant information in the knowledge base.
+IMPORTANT: You MUST use the retrieve_relevant_documentation tool for EVERY user question to search the knowledge base before answering. Do NOT provide answers from general knowledge without first searching the stored content.
 
-When analyzing the content, make sure to:
-1. Provide accurate information based on the stored content
-2. Cite specific examples when possible
-3. Be clear when you're making assumptions or inferring information
+Your workflow for every question:
+1. ALWAYS call retrieve_relevant_documentation with the user's question
+2. Analyze the retrieved content
+3. Provide an answer based ONLY on the retrieved content
+4. If no relevant content is found, clearly state that the information is not in the knowledge base
+
+When analyzing the retrieved content:
+1. Provide accurate information based ONLY on the stored content
+2. Cite specific examples and sources from the retrieved documents
+3. Be clear when you're making assumptions or if information is incomplete
+4. Never supplement with external knowledge unless explicitly requested
 """
 
 pydantic_ai_agent = Agent(
@@ -62,7 +68,16 @@ async def get_embedding(text: str, openai_client: AsyncOpenAI) -> List[float]:
 async def retrieve_relevant_documentation(
     ctx: RunContext[PydanticAIDeps], user_query: str
 ) -> str:
-    """Retrieve relevant documentation chunks based on the query."""
+    """
+    ALWAYS call this tool first for ANY user question to search the knowledge base.
+    This tool retrieves relevant documentation chunks based on the user's query.
+    
+    Args:
+        user_query: The user's question or topic to search for in the knowledge base
+        
+    Returns:
+        Relevant documentation content that should be used to answer the user's question
+    """
     try:
         query_embedding = await get_embedding(user_query, ctx.deps.openai_client)
 

@@ -1,0 +1,12 @@
+# VectorX MCP Server Requirements
+# Core FastMCP framework
+fastmcp>=0.1.0
+
+# Already included in your main requirements.txt:
+# openai>=1.0.0
+# python-dotenv>=1.0.0
+# vecx
+
+# Optional: For enhanced functionality
+# httpx>=0.24.0
+# pydantic>=2.0.0
